@@ -1,0 +1,36 @@
+Clusters:
+  nnx35:
+    SystemRootToken: {{ root_token | quote }}
+    ManagementToken: {{ manage_token | quote }}
+    API:
+      RailsSessionSecretToken: {{ rails_secret | quote }}
+    Collections:
+      BlobSigningKey: {{ blob_key | quote }}
+    PostgreSQL:
+      Connection:
+        host: {{ database.host | quote }}
+        user: arvados
+        password: {{ database_password | quote }}
+        dbname: arvados_production
+    Services:
+      Controller:
+        ExternalURL: {{ "https://" ~ cluster_id ~ "." ~ base_host }}
+        InternalURLs:
+          "http://localhost:8003": {}
+      RailsAPI:
+        # Does not have an ExternalURL
+        InternalURLs:
+          "http://localhost:8004": {}
+      SSO:
+        ExternalURL: {{ "https://auth." ~ cluster_id ~ "." ~ base_host }}
+      Workbench2:
+        ExternalURL: {{ "https://workbench." ~ cluster_id ~ "." ~ base_host }}
+      Websocket:
+        InternalURLs:
+          "http://localhost:8005": {}
+        ExternalURL: {{ "wss://ws." ~ cluster_id ~ "." ~ base_host ~ "/websocket" }}
+    Login:
+      ProviderAppID: "arvados-server"
+      ProviderAppSecret: {{ provider_secret | quote }}
+    Users:
+      AutoAdminFirstUser: true
