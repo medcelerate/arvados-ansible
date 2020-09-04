@@ -9,31 +9,31 @@ platforms:
     pre_build_image: true
     groups:
       - arvados
-      - arvados_controller
+      - arvados-controller
   - name: arvados_keep_manager
     image: centos:7
     pre_build_image: true
     groups:
       - arvados
-      - arvados_keep_manager
+      - arvados-keep-manager
   - name: arvados_keep1
     image: centos:7
     pre_build_image: true
     groups:
       - arvados
-      - arvados_keep
+      - arvados-keep
   - name: arvados_keep2
     image: centos:7
     pre_build_image: true
     groups:
       - arvados
-      - arvados_keep
+      - arvados-keep
   - name: arvados_compute
     image: centos:7
     pre_build_image: true
     groups:
       - arvados
-      - arvados_compute
+      - arvados-compute
 provisioner:
   name: ansible
 verifier:
