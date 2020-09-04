@@ -1,0 +1,40 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: arvados_controller
+    image: centos:7
+    pre_build_image: true
+    groups:
+      - arvados
+      - arvados_controller
+  - name: arvados_keep_manager
+    image: centos:7
+    pre_build_image: true
+    groups:
+      - arvados
+      - arvados_keep_manager
+  - name: arvados_keep1
+    image: centos:7
+    pre_build_image: true
+    groups:
+      - arvados
+      - arvados_keep
+  - name: arvados_keep2
+    image: centos:7
+    pre_build_image: true
+    groups:
+      - arvados
+      - arvados_keep
+  - name: arvados_compute
+    image: centos:7
+    pre_build_image: true
+    groups:
+      - arvados
+      - arvados_compute
+provisioner:
+  name: ansible
+verifier:
+  name: ansible
