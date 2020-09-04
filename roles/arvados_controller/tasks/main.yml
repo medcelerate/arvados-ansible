@@ -19,7 +19,7 @@
     gpgkey: https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key.txt
     gpgpcheck: yes
     sslcacert: /etc/pki/tls/certs/ca-bundle.crt
-  when: ansible_facts['os_family'] == "redhat"
+  when: ansible_facts['os_family'] == "RedHat"
 
 - name: Install Dependencies
   package:
