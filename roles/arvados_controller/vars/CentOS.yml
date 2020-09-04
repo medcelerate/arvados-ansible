@@ -1,0 +1,10 @@
+__deps
+ - nginx
+ - gpg
+ - curl
+ - which
+ - epel-release
+ - yum-utils
+ - pygpgme
+ - nginx
+ - passenger

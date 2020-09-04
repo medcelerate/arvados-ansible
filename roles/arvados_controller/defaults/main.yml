@@ -1,2 +1,13 @@
 ---
 # defaults file for arvados_controller
+proxy: http://localhost:3180
+cluster_id: "{{ lookup('password', '/dev/null length=5 chars=ascii_letters') }}"
+root_token: "{{ lookup('password', '/dev/null length=50 chars=ascii_letters') }}"
+manage_token: "{{ lookup('password', '/dev/null length=50 chars=ascii_letters') }}"
+rails_secret: "{{ lookup('password', '/dev/null length=50 chars=ascii_letters') }}"
+blob_key: "{{ lookup('password', '/dev/null length=50 chars=ascii_letters') }}"
+sso_secret: "{{ lookup('password', '/dev/null length=36 chars=ascii_letters') }}"
+cookie_secret: "{{ lookup('password', '/dev/null length=36 chars=ascii_letters') }}"
+provider_secret: "{{ lookup('password', '/dev/null length=50 chars=ascii_letters') }}"
+database_password: "{{ lookup('password', '/dev/null length=30 chars=ascii_letters') }}"
+base_host: "arvados.genomics.mscic.io"

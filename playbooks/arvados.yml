@@ -1,0 +1,12 @@
+---
+- hosts: arvados-controller
+  roles: arvados_controller
+
+- hosts: arvados-keep-manager
+  roles: arvados_keep_manager
+
+- hosts: arvados-keep
+  roles: arvados_keep
+
+- hosts: arvados-compute
+  roles: arvados_compute

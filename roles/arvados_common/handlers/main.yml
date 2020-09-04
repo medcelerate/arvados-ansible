@@ -1,2 +1,4 @@
 ---
 # handlers file for arvados_common
+- name: restart arvados
+  command: echo "replace me with actual logic"

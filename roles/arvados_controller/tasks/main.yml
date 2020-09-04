@@ -1,2 +1,133 @@
 ---
 # tasks file for arvados_controller
+- name: Set platform/version specific variables
+  include_vars: "{{ __rolename_vars_file }}"
+  loop:
+    - "{{ ansible_facts['os_family'] }}.yml"
+    - "{{ ansible_facts['distribution'] }}.yml"
+    - "{{ ansible_facts['distribution'] }}_{{ ansible_facts['distribution_major_version'] }}.yml"
+    - "{{ ansible_facts['distribution'] }}_{{ ansible_facts['distribution_version'] }}.yml"
+  vars:
+    __rolename_vars_file: "{{ role_path }}/vars/{{ item }}"
+  when: __rolename_vars_file is file
+
+- name: Add passenger repo
+  yum_repository:
+    name: passenger
+    description: Passenger repo
+    baseurl: https://oss-binaries.phusionpassenger.com/yum/passenger/el/$releasever/$basearch
+    gpgkey: https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key.txt
+    gpgpcheck: yes
+    sslcacert: /etc/pki/tls/certs/ca-bundle.crt
+  when: ansible_facts['os_family'] == "redhat"
+
+- name: Install Dependencies
+  package:
+    name: "{{ __deps }}"
+
+- name: Install Bundler
+  gem:
+    name: bundler
+
+- name: Load External DB vars
+  include_vars:
+    file: variables/db.yml
+    name: database
+  when: external_db
+
+- name: Create DB Variables
+  set_fact:
+    database:
+      host: localhost
+  when: not external_db
+
+- name: Load Postgres
+  include_role:
+    name: robertdebock.scl
+    vars:
+      scl_manage_repo: true
+      scl_packages:
+        - {name: 'rh-postgresql95', state: 'latest'}
+        - {name: 'rh-postgresql95-postgresql-contrib', state: 'latest'}
+  when: not external_db
+
+- name: Initialize db
+  command: scl enable rh-postgresql95 bash && postgresql-setup initdb
+  when: not external_db
+
+- name: Update Postgres Conf
+  postgresql_pg_hba:
+    dest: /var/lib/pgsql/data/pg_hba.conf
+    contype: host
+    databases: all
+    users: all
+    source: ::1/128
+    method: md5
+    create: true
+  when: not external_db
+
+- name: Start Postgres
+  systemd:
+    name: rh-postgresql95-postgresql
+    state: started
+    enabled: yes
+  when: not external_db
+
+- name: Setup Postgres User
+  postgresql_user:
+    db: arvados_production
+    name: arvados
+    password: "{{ database_password }}"
+    encrypted: yes
+  when: not external_db
+
+
+- name: Setup Postgres Database
+  postgresql_db:
+    name: arvados_production
+    encoding: UTF-8
+    template: template0
+    owner: arvados
+  when: not external_db
+
+
+- name: Setup Postgres User
+  postgresql_user:
+    db: arvados_production
+    name: arvados
+    password: "{{ database_password }}"
+    encrypted: yes
+    login_host: "{{ db.host }}"
+    login_password: "{{ db.password }}"
+    login_user: "{{ db.user }}"
+  when: external_db
+
+
+- name: Setup Postgres Database
+  postgresql_db:
+    name: arvados_production
+    encoding: UTF-8
+    template: template0
+    owner: arvados
+    login_host: "{{ db.host }}"
+    login_password: "{{ db.password }}"
+    login_user: "{{ db.user }}"
+  when: external_db
+
+- name: Install Arvados Controller
+  package:
+    name:
+      - arvados-api-server
+      - arvados-controller
+
+- name: Start nginx
+  systemd:
+    state: started
+    name: nginx
+    enabled: yes
+
+- name: Start Arvados ControlPlane
+  systemd:
+    name: arvados-controller
+    state: started
+    enabled: yes
