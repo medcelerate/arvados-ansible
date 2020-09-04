@@ -1,0 +1,16 @@
+---
+# tasks file for arvados_common
+- name: Add Arvados Repo
+  yum_repository:
+    name: arvados
+    baseurl: http://rpm.arvados.org/CentOS/$releasever/os/$basearch/
+    gpgkey: http://rpm.arvados.org/CentOS/RPM-GPG-KEY-curoverse
+    gpgcheck: yes
+    proxy: http://localhost:3180
+
+- name: Write Arvados Config
+  template:
+    src: templates/arvados.config.j2
+    dest: /etc/arvados/config.yml
+  notify: restart arvados
+

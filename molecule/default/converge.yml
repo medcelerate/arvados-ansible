@@ -2,6 +2,6 @@
 - name: Converge
   hosts: all
   tasks:
-    - name: "Include Arvados-Ansible"
+    - name: "Include arvados-ansible"
       include_role:
-        name: "Arvados-Ansible"
+        name: "arvados-ansible"
